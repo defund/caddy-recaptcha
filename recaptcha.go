@@ -17,10 +17,6 @@ type Rule interface {
 }
 
 func (h Recaptchas) ServeHTTP(w http.ResponseWriter, r *http.Request) (int, error) {
-	if r.Method != "POST" {
-		return h.Next.ServeHTTP(w, r)
-	}
-
 	for _, rule := range h.Rules {
 		if !rule.Validate(r) {
 			return 400, errors.New("Failed to validate reCAPTCHA.")

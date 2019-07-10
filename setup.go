@@ -1,6 +1,7 @@
 package recaptcha
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/caddyserver/caddy"
@@ -46,20 +47,35 @@ func parse(c *caddy.Controller) ([]Rule, error) {
 		if version == "v3" {
 			for c.NextBlock() {
 				action := c.Val()
+				if !c.NextArg() {
+					return nil, c.ArgErr()
+				}
+
 				recaptcha := V3Rule{Secret: secret, Action: action}
 
-				args := c.RemainingArgs()
-				if len(args) == 2 {
-					threshold, err := strconv.ParseFloat(args[0], 64)
-					if err != nil {
-						return nil, err
-					}
-					recaptcha.Threshold = threshold
-					recaptcha.Path = args[1]
-				} else if len(args) == 1 {
+				threshold, err := strconv.ParseFloat(c.Val(), 64)
+				if err != nil {
 					recaptcha.Threshold = .5
-					recaptcha.Path = args[0]
+				} else if !c.NextArg() {
+					return nil, c.ArgErr()
 				} else {
+					recaptcha.Threshold = threshold
+				}
+
+				method := c.Val()
+				if !(method == "POST" || method == "PUT" || method == "PATCH") {
+					recaptcha.Method = "POST"
+				} else if !c.NextArg() {
+					return nil, c.ArgErr()
+				} else {
+					recaptcha.Method = method
+				}
+
+				path := c.Val()
+				recaptcha.Path = path
+
+				args := c.RemainingArgs()
+				if len(args) != 0 {
 					return nil, c.ArgErr()
 				}
 
@@ -67,6 +83,6 @@ func parse(c *caddy.Controller) ([]Rule, error) {
 			}
 		}
 	}
-
+	fmt.Printf("%+v\n", rules)
 	return rules, nil
 }

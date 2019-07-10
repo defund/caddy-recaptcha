@@ -11,10 +11,15 @@ type V3Rule struct {
 	Secret    string
 	Action    string
 	Threshold float64
+	Method    string
 	Path      string
 }
 
 func (rule V3Rule) Validate(r *http.Request) bool {
+	if r.Method != rule.Method {
+		return true
+	}
+
 	if r.URL.Path != rule.Path {
 		return true
 	}
