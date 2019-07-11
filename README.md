@@ -2,9 +2,9 @@
 
 reCAPTCHA verification middleware for Caddy.
 
-caddy-recaptcha performs reCAPTCHA validation on incoming requests. This allows backends to simplify their code and logic. However, caddy-captcha does not inject reCAPTCHA code into outgoing HTML pages. This can be done relatively easily with the http.filter plugin.
+The recaptcha directive performs reCAPTCHA validation on incoming requests. Upon receiving a specified type of request, it extracts the response token and sends it to the reCAPTCHA server. If the request is invalid, recaptcha drops it and returns a 400 status code.
 
-The recaptcha directive specifies certain types of requests that should be validated. Upon receiving one, caddy-recaptcha extracts the response token and sends it to the reCAPTCHA server. If the request is invalid, caddy-recaptcha drops it and returns a 400 status code.
+This allows backends to simplify their code and logic. However, the recaptcha directive does not inject reCAPTCHA code into outgoing HTML pages. Instead, that can be done with the http.filter plugin.
 
 Note: Do the nature of reCAPTCHA, automated testing is not possible for much of caddy-captcha's functionality. Rigorous manual testing was conducted instead.
 
