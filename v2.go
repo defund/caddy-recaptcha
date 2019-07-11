@@ -7,15 +7,13 @@ import (
 	"net/url"
 )
 
-type V3Rule struct {
-	Secret    string
-	Action    string
-	Threshold float64
-	Method    string
-	Path      string
+type V2Rule struct {
+	Secret string
+	Method string
+	Path   string
 }
 
-func (rule V3Rule) Validate(r *http.Request) bool {
+func (rule V2Rule) Validate(r *http.Request) bool {
 	if r.Method != rule.Method {
 		return true
 	}
@@ -48,14 +46,6 @@ func (rule V3Rule) Validate(r *http.Request) bool {
 	var result map[string]interface{}
 	json.NewDecoder(resp.Body).Decode(&result)
 
-	if !result["success"].(bool) {
-		return false
-	}
-
-	if result["action"].(string) != rule.Action {
-		return false
-	}
-
 	host, _, err := net.SplitHostPort(r.Host)
 	if err != nil {
 		return false
@@ -65,9 +55,5 @@ func (rule V3Rule) Validate(r *http.Request) bool {
 		return false
 	}
 
-	if result["score"].(float64) < rule.Threshold {
-		return false
-	}
-
-	return true
+	return result["success"].(bool)
 }

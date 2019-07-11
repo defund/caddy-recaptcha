@@ -1,7 +1,6 @@
 package recaptcha
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/caddyserver/caddy"
@@ -82,7 +81,32 @@ func parse(c *caddy.Controller) ([]Rule, error) {
 				rules = append(rules, recaptcha)
 			}
 		}
+
+		if version == "v2" {
+			for c.NextBlock() {
+				recaptcha := V2Rule{Secret: secret}
+
+				method := c.Val()
+				if !(method == "POST" || method == "PUT" || method == "PATCH") {
+					recaptcha.Method = "POST"
+				} else if !c.NextArg() {
+					return nil, c.ArgErr()
+				} else {
+					recaptcha.Method = method
+				}
+
+				path := c.Val()
+				recaptcha.Path = path
+
+				args := c.RemainingArgs()
+				if len(args) != 0 {
+					return nil, c.ArgErr()
+				}
+
+				rules = append(rules, recaptcha)
+			}
+		}
 	}
-	fmt.Printf("%+v\n", rules)
+
 	return rules, nil
 }

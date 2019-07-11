@@ -2,11 +2,13 @@
 
 reCAPTCHA verification middleware for Caddy.
 
-## Syntax
+## Usage
 
 ### v3
 
-The reCAPTCHA response token must be supplied as form data with the key `caddy-recaptcha-response`.
+The reCAPTCHA response token must be supplied as one of the following:
+* Form data with the key `g-recaptcha-response`
+* Header with the name `g-recaptcha-response`
 
 ```
 recaptcha v3 secret {
@@ -24,4 +26,24 @@ recaptcha v3 secret {
 	* default is POST
 * **path** is the URL path to validate
 
-Multiple lines can be specified within the block, which will all share the same version and secret.
+Multiple lines can be specified within the block, which will all share the same secret.
+
+### v2
+
+The reCAPTCHA response token must be supplied as one of the following:
+* Form data with the key `g-recaptcha-response`
+* Header with the name `g-recaptcha-response`
+
+```
+recaptcha v2 secret {
+	[method] path
+}
+```
+
+* **secret** is the secret key
+* **method** is the request method to validate
+	* one of POST, PUT, PATCH
+	* default is POST
+* **path** is the URL path to validate
+
+Multiple lines can be specified within the block, which will all share the same secret.
