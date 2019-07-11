@@ -6,6 +6,8 @@ caddy-recaptcha performs reCAPTCHA validation on incoming requests. This allows 
 
 The recaptcha directive specifies certain types of requests that should be validated. Upon receiving one, caddy-recaptcha extracts the response token and sends it to the reCAPTCHA server. If the request is invalid, caddy-recaptcha drops it and returns a 400 status code.
 
+Note: Do the nature of reCAPTCHA, automated testing is not possible for much of caddy-captcha's functionality. Rigorous manual testing was conducted instead.
+
 ## Usage
 
 ### v3

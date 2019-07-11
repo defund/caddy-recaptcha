@@ -1,6 +1,7 @@
 package recaptcha
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/caddyserver/caddy"
@@ -55,6 +56,8 @@ func parse(c *caddy.Controller) ([]Rule, error) {
 				threshold, err := strconv.ParseFloat(c.Val(), 64)
 				if err != nil {
 					recaptcha.Threshold = .5
+				} else if !(threshold >= 0 && threshold <= 1) {
+					return nil, fmt.Errorf("Invalid threshold %f.", threshold)
 				} else if !c.NextArg() {
 					return nil, c.ArgErr()
 				} else {
@@ -80,9 +83,7 @@ func parse(c *caddy.Controller) ([]Rule, error) {
 
 				rules = append(rules, recaptcha)
 			}
-		}
-
-		if version == "v2" {
+		} else if version == "v2" {
 			for c.NextBlock() {
 				recaptcha := V2Rule{Secret: secret}
 
@@ -105,6 +106,8 @@ func parse(c *caddy.Controller) ([]Rule, error) {
 
 				rules = append(rules, recaptcha)
 			}
+		} else {
+			return nil, fmt.Errorf("Invalid version %s.", version)
 		}
 	}
 
