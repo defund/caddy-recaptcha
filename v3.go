@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"path"
 )
 
 type V3Rule struct {
@@ -20,7 +21,7 @@ func (rule V3Rule) Validate(r *http.Request) bool {
 		return true
 	}
 
-	if r.URL.Path != rule.Path {
+	if path.Clean(r.URL.Path) != rule.Path {
 		return true
 	}
 
